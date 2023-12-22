@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+
 export default function Login() {
   return (
     <Container>
@@ -75,9 +76,11 @@ const Sign = styled.button`
   margin: 30px 20px;
   font-size:30px ;
   letter-spacing: 1.5px;
+  transition: all 1s;
 
   &:hover{
     background-color: #24A0ED ;
+    color:black
   }
 `
 
@@ -87,5 +90,4 @@ const Description = styled.div`
   color: black;
   font-weight: bolder;
   background-color: rgb(240, 248, 255,0.3);
-
   `

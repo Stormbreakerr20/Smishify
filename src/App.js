@@ -19,6 +19,7 @@ import Note from './Note';
 
 function App() {
   let [alert,setalert]=useState(null)
+
   const showalert=(message,type)=>{
     setalert({
       msg:message,
@@ -28,18 +29,16 @@ function App() {
       setalert(null)
     }, 3000);
   }
-  
-  
+
   return (
     <div className="App">
 
       <Router>
           <Navbar></Navbar>
-          
           {alert!==null&&<Alert alert={alert}></Alert>}
         <Routes>
-    
            <Route path='/' element={<Login />} />
+           
            <Route path='/text' element={<Textform showAlert={showalert} />} />
            <Route path="/weather" element={<Weather />} />
            <Route path="/todo" element={<Todo />} />
@@ -47,7 +46,6 @@ function App() {
 
            <Route path='/news' element={<News  key="1" country='in' cat='general'/>} />
            <Route path='/gen' element={<News  key="1" country='in' cat='general'/>} />
-
             <Route path='/sports' element={<News  key="2" country='in' cat='sports'></News>} />
             <Route path='/health' element={<News  key="3" country='in' cat='health'></News>} />
             <Route path='/business' element={<News  key="4" country='in' cat='business'></News>} />

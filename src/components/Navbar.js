@@ -1,167 +1,165 @@
-import React, { useEffect } from 'react'
-import styled from 'styled-components'
-import {useDispatch ,useSelector} from 'react-redux'
-import { useNavigate } from 'react-router-dom';
-
+import React, { useEffect } from "react";
+import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import {
-    selectUserName,
-    selectUserPhoto,
-    setSignOutState,
-    setUserLoginDetails,
-} from "../features/user/userSlice"
+  selectUserName,
+  selectUserPhoto,
+  setSignOutState,
+  setUserLoginDetails,
+} from "../features/user/userSlice";
 
-import {auth,provider} from "../firebase";
+import { auth, provider } from "../firebase";
+import { Link } from "react-router-dom";
 
 export default function Navbar(props) {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const username = useSelector(selectUserName);
+  const userPhoto = useSelector(selectUserPhoto);
 
-    const dispatch = useDispatch()
-    const navigate = useNavigate()
-    const username=useSelector(selectUserName)
-    const userPhoto=useSelector(selectUserPhoto)
+  useEffect(() => {
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        setUser(user);
+      } else if (!user) {
+        navigate("/");
+      }
+    });
+  });
 
-    useEffect(()=>{
-        auth.onAuthStateChanged(async (user)=>{
-            if(user){
-                setUser(user)
-            }
-            else if(!user){
-                navigate('/')
-            }
+  const setUser = (user) => {
+    dispatch(
+      setUserLoginDetails({
+        name: user.displayName,
+        email: user.email,
+        photo: user.photoURL,
+      })
+    );
+  };
+  const handleauth = () => {
+    if (!username) {
+      auth
+        .signInWithPopup(provider)
+        .then((i) => {
+          setUser(i.user);
         })
-    })
-
-    const setUser=(user)=>{
-        dispatch(setUserLoginDetails({
-            "name":user.displayName,
-            "email":user.email,
-            "photo":user.photoURL
-        }))
+        .catch((error) => alert(error.message));
+    } else if (username) {
+      auth.signOut().then(() => {
+        dispatch(setSignOutState());
+        navigate("/");
+      });
     }
-    const handleauth=()=>{
-        if(!username){
-
-            auth.signInWithPopup(provider).then((i)=>{setUser(i.user)}).catch((error)=>alert(error.message))
-        }
-        else if(username){
-            auth.signOut().then(()=>{
-                dispatch(setSignOutState())
-                navigate('/')
-            })
-        }
-    }
+  };
 
   return (
     <div>
-        <Nav>
-            <Logo1> SMISHIFY</Logo1>
-            { !username ? <Login onClick={handleauth}>Login</Login>: <>  
+      <Nav>
+        <Logo1> SMISHIFY</Logo1>
+        {!username ? (
+          <Login onClick={handleauth}>Login</Login>
+        ) : (
+          <>
             <Navmenu>
-                <a href="/">
-                    <span>HOME</span>
-                </a>
-                <a href='/news'>
-                    <span>NEWS</span>
-                </a>
-                <a href="/weather">
-                    <span>WEATHER</span>
-                </a>
-                <a href="/text">
-
-                    <span>TEXT-EDITOR</span>
-                </a>
-                <a href="/note">
-
-                    <span>NOTE-MAKING</span>
-                </a>
-                <a href="/todo">
-                    <span>TO-DO-LIST</span>
-                </a>
+              <Link href="/">
+                <span>HOME</span>
+              </Link>
+              <a href="/news">
+                <span>NEWS</span>
+              </a>
+              <a href="/weather">
+                <span>WEATHER</span>
+              </a>
+              <a href="/text">
+                <span>TEXT-EDITOR</span>
+              </a>
+              <a href="/note">
+                <span>NOTE-MAKING</span>
+              </a>
+              <a href="/todo">
+                <span>TO-DO-LIST</span>
+              </a>
             </Navmenu>
+
             <Signout>
-
-            <Image1 src={userPhoto}></Image1>
-            <Dropdown>
+              <Image1 src={userPhoto}></Image1>
+              <Dropdown>
                 <span onClick={handleauth}>Sign Out</span>
-            </Dropdown>
+              </Dropdown>
             </Signout>
-            </>}
-        </Nav>
-
+          </>
+        )}
+      </Nav>
     </div>
-  )
+  );
 }
-const Image1=styled.img`
-    height: 100%;
-`
+const Image1 = styled.img`
+  height: 100%;
+`;
 
 const Dropdown = styled.div`
-    position: absolute;
-    top: 48px;
-    right: 0px;
-    background-color: rgb(19,19,19);
-    border: 1px solid rgba(151,151,151,0.34);
-    border-radius: 4px;
-    padding: 10px;
-    font-size: 15px;
-    letter-spacing: 3px;
-    width: 120px;
-    opacity: 0;
-
-
-`
+  position: absolute;
+  top: 48px;
+  right: 0px;
+  background-color: rgb(19, 19, 19);
+  border: 1px solid rgba(151, 151, 151, 0.34);
+  border-radius: 4px;
+  padding: 10px;
+  font-size: 15px;
+  letter-spacing: 3px;
+  width: 120px;
+  opacity: 0;
+`;
 const Signout = styled.div`
-    position: relative;
-    height: 48px;
-    width: 60px;
-    display: flex;
-    cursor: pointer;
-    align-items: center;
-    justify-content: center;
+  position: relative;
+  height: 48px;
+  width: 60px;
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
 
-    ${Image1}{
-        border-radius:50%;
-        width: 100%;
-        height: 100%;
+  ${Image1} {
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+  }
+
+  &:hover {
+    ${Dropdown} {
+      opacity: 1;
+      transition-duration: 1s;
     }
-
-    &:hover{
-        ${Dropdown}{
-            opacity: 1;
-            transition-duration:1s;
-        }
-    }
-
-`
-
-
-
+  }
+`;
 
 const Nav = styled.nav`
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: space-between;
-    height: 80px;
-    background-color: #090b13;
-    align-items: center;
-    padding: 0 35px;
-    z-index: 3;
-    letter-spacing: 3px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  height: 80px;
+  background-color: #090b13;
+  align-items: center;
+  padding: 0 35px;
+  z-index: 3;
+  letter-spacing: 3px;
 
-    a{
-        background-color: transparent;
-        border: none;
-        display: flex;
-        align-items: center;
-        padding: 0 10px;
-    img{
-        height: 20px;
-        min-width:20px ;
-        width: 20px;
-        z-index: auto;
+  a {
+    background-color: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    img {
+      height: 20px;
+      min-width: 20px;
+      width: 20px;
+      z-index: auto;
     }
     span {
       color: rgb(249, 249, 249);
@@ -198,44 +196,39 @@ const Nav = styled.nav`
         cursor: pointer;
       }
     }
-    }
-
-  
-`
+  }
+`;
 
 const Logo1 = styled.a`
-    font-size:30px;
-`
+  font-size: 30px;
+`;
 const Navmenu = styled.div`
-    display: flex;
-    flex-direction: row nowrap;
-    height: 100%;
-    justify-content: flex-end;
-    align-items: center;
-    margin: 0px;
-    padding: 0px;
-    position: relative;
-    margin-right:auto;
-    margin-left: 25px;
+  display: flex;
+  flex-direction: row nowrap;
+  height: 100%;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 0px;
+  padding: 0px;
+  position: relative;
+  margin-right: auto;
+  margin-left: 25px;
 
-    @media (max-width :768px) {
-        display: none;
-
-        
-    }
-`
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
 const Login = styled.a`
-    background-color: rgb(0,0,0,0.6);
-    border: 2px solid #f9f9f9;
-    padding: 10px 20px !important;
-    border-radius:5px;
-    transition: all 0.2s ease 0s;
+  background-color: rgb(0, 0, 0, 0.6);
+  border: 2px solid #f9f9f9;
+  padding: 10px 20px !important;
+  border-radius: 5px;
+  transition: all 0.2s ease 0s;
 
-    &:hover{
-        background-color: #f9f9f9;
-        color: black;
-        font-weight: bold;
-        cursor: pointer;
-    }
-
-`
+  &:hover {
+    background-color: #f9f9f9;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+  }
+`;
