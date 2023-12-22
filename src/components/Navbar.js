@@ -63,24 +63,24 @@ export default function Navbar(props) {
         ) : (
           <>
             <Navmenu>
-              <Link href="/">
-                <span>HOME</span>
+              <Link to="/">
+                <span >HOME</span>
               </Link>
-              <a href="/news">
+              <Link to="/news">
                 <span>NEWS</span>
-              </a>
-              <a href="/weather">
+              </Link>
+              <Link to="/weather">
                 <span>WEATHER</span>
-              </a>
-              <a href="/text">
+              </Link>
+              <Link to="/text">
                 <span>TEXT-EDITOR</span>
-              </a>
-              <a href="/note">
+              </Link>
+              <Link to="/note">
                 <span>NOTE-MAKING</span>
-              </a>
-              <a href="/todo">
+              </Link>
+              <Link to="/todo">
                 <span>TO-DO-LIST</span>
-              </a>
+              </Link>
             </Navmenu>
 
             <Signout>
