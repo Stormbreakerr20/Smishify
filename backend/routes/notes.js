@@ -23,9 +23,7 @@ router.post('/addnote/', async (req, res) => {
                 title, description, tag, user: req.body.id
             })
             const savedNote = await note.save()
-
             res.json(savedNote)
-
         } catch (error) {
             console.error(error.message);
             res.status(500).send("Internal Server Error");

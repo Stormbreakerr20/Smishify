@@ -2,7 +2,7 @@ import React from "react";
 import { FaTrashAlt } from "react-icons/fa";
 import { FaRegEdit } from "react-icons/fa";
 import { IoIosAddCircle } from "react-icons/io";
-import { useRef } from "react";
+import { useRef, useCallback } from "react";
 import api from "../../api";
 import { auth } from "../../firebase";
 import Loading from "../Loading";
@@ -46,37 +46,61 @@ function Note() {
   const [addNote, setAddNote] = React.useState(true);
 
   const fetchNotes = async (userid) => {
-    const res = await api.post(`notes/fetchallnotes`, { id: userid });
+    const res = await api.post(`notes/fetchallnotes/`, { id: userid });
     setNotes(res.data);
   };
 
   const [notes, setNotes] = React.useState([]);
 
-  const handleSubmit = async () => {
+  const [click, setClick] = React.useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!note.title || !note.description) {
+      toast.error("Please fill all the fields");
+      return;
+    }
     setLoading(true);
     if (addNote) {
-      const res = await api.post(`notes/addnote`, {
-        title: note.title,
-        description: note.description,
-        tag: note.tag,
-        id: id,
-      });
-      setNotes([...notes, res.data]);
-      
+      try {
+        const res = await api.post(`notes/addnote/`, {
+          title: note.title,
+          description: note.description,
+          tag: note.tag,
+          id: id,
+        });
+        toast.success("Note Added Successfully");
+        fetchNotes(id);
+      } catch (error) {
+        console.error("Error adding note:", error);
+      } finally {
+        refClose.current.click();
+        setLoading(false);
+      }
     } else {
-      const res = await api.put(`notes/updatenote/${note.id}`, {
-        title: note.title,
-        description: note.description,
-        tag: note.tag,
-        id: id,
-      });
-      setNote({});
-      setNotes([...notes, res.data]);
+      try {
+        const res = await api.put(`notes/updatenote/${note.id}`, {
+          title: note.title,
+          description: note.description,
+          tag: note.tag,
+          id: id,
+        });
+        toast.success("Note Updated Successfully");
+        fetchNotes(id);
+      } catch (error) {
+        console.error("Error updating note:", error);
+      } finally {
+        refClose.current.click();
+        setLoading(false);
+      }
     }
-    setLoading(false);
-    refClose.current.click();
+    setNote({
+      title: "",
+      description: "",
+      tag: "",
+    });
   };
-  
+
   const [note, setNote] = React.useState({});
 
   const onChange = (e) => {
@@ -85,13 +109,12 @@ function Note() {
 
   const convertTimestampToMMDDYYYY = (timestamp) => {
     const date = new Date(timestamp);
-    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
-    const day = date.getUTCDate().toString().padStart(2, '0');
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, "0");
+    const day = date.getUTCDate().toString().padStart(2, "0");
     const year = date.getUTCFullYear().toString();
-    
+
     return `${month}/${day}/${year}`;
   };
-
 
   return (
     <div className="min-h-[100vh] max-w-[100vw] flex items-center flex-col gap-5 pt-[6rem]">
@@ -102,45 +125,67 @@ function Note() {
         </div>
       ) : (
         <>
-          <div className="cursor-pointer flex items-center gap-1 text-lg" onClick={AddNote}>
+          <div
+            className="cursor-pointer flex items-center gap-1 text-lg"
+            onClick={AddNote}
+          >
             Add Notes <IoIosAddCircle className="inline-block" />
           </div>
-          <div className="flex flex-wrap gap-4 ml-10 mb-5">
-            {notes.map((note) => (
-              <div
-                className="min-h-[50vh] w-[30vw] bg-[#FFF690] text-black p-3 rounded-md flex flex-col justify-between"
-                key={note._id}
-              >
-                <div className="flex flex-col gap-4">
-                  <div className="text-2xl font-semibold">{note.title}</div>
-                  <div>{note.description}</div>
-                </div>
-                <div className="flex justify-between items-center ">  
-                  <div className="flex flex-col gap-1 ">
-                    <div className="text-sm">{note.tag}</div>
-                    <div className="text-sm">{convertTimestampToMMDDYYYY(note.date)}</div>
-                  </div>
-                  <div className="flex gap-1 text-lg">
-                    <FaTrashAlt
-                      className="inline-block cursor-pointer"
-                      onClick={() => DeleteNote(note._id)}
-                    />
-                    <FaRegEdit
-                      className="inline-block cursor-pointer"
-                      onClick={() =>
-                        EditNote({
-                          title: note.title,
-                          description: note.description,
-                          tag: note.tag,
-                          id: note._id,
-                        })
-                      }
-                    />
-                  </div>
+
+          {notes.length === 0 ? (
+            <div className="flex  items-center  h-[30vh] w-[50vw]">
+              <img
+                src="/images/searching.gif"
+                className="scale-50 p-0 "
+              ></img>
+              <span className="text-2xl">No notes found</span>
+            </div>
+          ) : (
+            <>
+              <div className="">
+                <div className="flex flex-wrap gap-4 ml-10 mb-5">
+                  {notes.map((note) => (
+                    <div
+                      className="min-h-[50vh] w-[30vw] bg-[#FFF690] text-black p-3 rounded-md flex flex-col justify-between"
+                      key={note._id}
+                    >
+                      <div className="flex flex-col gap-4">
+                        <div className="text-2xl font-semibold">
+                          {note.title}
+                        </div>
+                        <div>{note.description}</div>
+                      </div>
+                      <div className="flex justify-between items-center ">
+                        <div className="flex flex-col gap-1 ">
+                          <div className="text-sm">{note.tag}</div>
+                          <div className="text-sm">
+                            {convertTimestampToMMDDYYYY(note.date)}
+                          </div>
+                        </div>
+                        <div className="flex gap-1 text-lg">
+                          <FaTrashAlt
+                            className="inline-block cursor-pointer"
+                            onClick={() => DeleteNote(note._id)}
+                          />
+                          <FaRegEdit
+                            className="inline-block cursor-pointer"
+                            onClick={() =>
+                              EditNote({
+                                title: note.title,
+                                description: note.description,
+                                tag: note.tag,
+                                id: note._id,
+                              })
+                            }
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            ))}
-          </div>
+            </>
+          )}
         </>
       )}
 
@@ -171,6 +216,7 @@ function Note() {
                 class="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                 data-modal-hide="authentication-modal"
                 onClick={() => setAddNote(true)}
+                ref={refClose}
               >
                 <svg
                   class="w-3 h-3"
@@ -247,11 +293,17 @@ function Note() {
                 </div>
 
                 <button
-                  class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                  ref={refClose}
+                  class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 flex justify-center items-center focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                   onClick={handleSubmit}
+                  disabled={loading}
                 >
-                  Save changes
+                  {loading ? (
+                    <Loading className=" h-[15px] w-[15px]" />
+                  ) : addNote ? (
+                    "Add Note"
+                  ) : (
+                    "Update Note"
+                  )}
                 </button>
               </form>
             </div>

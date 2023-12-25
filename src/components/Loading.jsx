@@ -1,9 +1,9 @@
 import React from "react";
 
-function Loading() {
+function Loading({className}) {
   return (
     <svg
-      className={`stroke-black scale-[200%]`}
+      className={`stroke-black scale-[200%] ${className}}`}
       width="25"
       height="25"
       viewBox="0 0 25 25"
