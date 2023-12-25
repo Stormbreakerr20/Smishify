@@ -23,6 +23,7 @@ function News1({ country, cat }) {
       .then((res) => res.json())
       .then((data) => {
         setArticles(data.articles);
+        console.log(data.articles);
         setPage(1);
         setTotal(data.totalResults);
         setLoading(false);
@@ -48,52 +49,55 @@ function News1({ country, cat }) {
       <>
         <div>
           <Box>
-            <Navbarnews cat = {cat}></Navbarnews>
+            <Navbarnews cat={cat}></Navbarnews>
             <center>
               <h1 style={{ fontSize: "6vw", marginTop: "150px" }}>
                 Top-{capitalizeFirstLetter(cat)} Head Lines
               </h1>
             </center>
-            {loading && (
+            {loading ? (
               <center>
                 <img src="./images/Spin.gif" alt="loading..." />
               </center>
-            )}
-            <div className="container">
-              <InfiniteScroll
-                dataLength={articles.length}
-                next={fetchMoreData}
-                hasMore={articles.length !== total && articles.length <= 20}
-                loader={
-                  articles.length <= 20 &&
-                  articles.length !== total && (
-                    <h4>
-                      <center>
-                      <img src="./images/Spin.gif" alt="loading..." />
-                      </center>
-                    </h4>
-                  )
-                }
-              >
+            ) : (
+              <>
                 <div className="container">
-                  <div className="row">
-                    {articles.map((article) => {
-                      return (
-                        <div className="col-md-4 my-3" key={article.url}>
-                          <Newsitem
-                            title={article.title}
-                            description={article.description}
-                            imageURL={article.urlToImage}
-                            newsURL={article.url}
-                            source={article.source.name}
-                          ></Newsitem>
-                        </div>
-                      );
-                    })}
-                  </div>
+                  <InfiniteScroll
+                    dataLength={articles.length}
+                    next={fetchMoreData}
+                    hasMore={articles.length !== total && articles.length <= 20}
+                    loader={
+                      articles.length <= 20 &&
+                      articles.length !== total && (
+                        <h4>
+                          <center>                                                      
+                            <img src="./images/Spin.gif" alt="loading..." />
+                          </center>
+                        </h4>
+                      )
+                    }
+                  >
+                    <div className="container">
+                      <div className="row">
+                        {articles.map((article) => {
+                          return (
+                            <div className="col-md-4 my-3" key={article.url}>
+                              <Newsitem
+                                title={article.title}
+                                description={article.description}
+                                imageURL={article.urlToImage}
+                                newsURL={article.url}
+                                source={article.source.name}
+                              ></Newsitem>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </InfiniteScroll>
                 </div>
-              </InfiniteScroll>
-            </div>
+              </>
+            )}
           </Box>
         </div>
       </>
