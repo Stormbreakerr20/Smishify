@@ -90,7 +90,7 @@ export default function Weather() {
           >
             Weather
           </div>
-          <div className="collapse navbar-collapse" id="navbarColor01">
+          <div id="navbarColor01">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0"></ul>
             <form className="d-flex">
               <input
@@ -127,7 +127,6 @@ export default function Weather() {
             marginTop: "20px",
           }}
         >
-          {" "}
           Could not find weather of searched location{" "}
         </div>
       ) : loading ? (
@@ -160,7 +159,7 @@ export default function Weather() {
                   style={{ backgroundColor: "#d3cbb1" }}
                 >
                   <h1 className="card-title pricing-card-title">
-                    <span id="temp1" style={{ color: "black" }}>
+                    <span id="temp1" style={{ color: "black",fontSize:"40px" }}>
                       {temp}&#xb0;C
                     </span>
                   </h1>
@@ -192,7 +191,7 @@ export default function Weather() {
                   style={{ backgroundColor: "#d3cbb1" }}
                 >
                   <h1 className="card-title pricing-card-title">
-                    <span id="humidity1" style={{ color: "black" }}>
+                    <span id="humidity1" style={{ color: "black",fontSize:"40px"}}>
                       {humidity}%
                     </span>
                   </h1>
@@ -226,7 +225,7 @@ export default function Weather() {
                   style={{ backgroundColor: "#d3cbb1" }}
                 >
                   <h1 className="card-title pricing-card-title">
-                    <span id="wind_speed1" style={{ color: "black" }}>
+                    <span id="wind_speed1" style={{ color: "black",fontSize:"40px" }}>
                       {wind_speed} km/hr
                     </span>
                   </h1>

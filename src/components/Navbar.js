@@ -78,9 +78,6 @@ export default function Navbar(props) {
               <Link to="/note">
                 <span>NOTE-MAKING</span>
               </Link>
-              <Link to="/todo">
-                <span>TO-DO-LIST</span>
-              </Link>
             </Navmenu>
 
             <Signout>

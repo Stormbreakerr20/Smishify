@@ -13,9 +13,8 @@ import Weather from './components/Weathercomp/Weather';
 import Textform from './components/Text/Textform'
 import Alert from './components/Text/Alert';
 import { useState } from 'react';
-
-import Todo from './Todo';
-import Note from './Note';
+import { ToastContainer } from 'react-toastify';
+import Note from './components/Notes/Note';
 
 function App() {
   let [alert,setalert]=useState(null)
@@ -41,7 +40,6 @@ function App() {
            
            <Route path='/text' element={<Textform showAlert={showalert} />} />
            <Route path="/weather" element={<Weather />} />
-           <Route path="/todo" element={<Todo />} />
            <Route path="/note" element={<Note />} />
 
            <Route path='/news' element={<News  key="1" country='in' cat='general'/>} />
@@ -55,7 +53,7 @@ function App() {
 
         </Routes>
       </Router>
-
+      <ToastContainer />
     </div>
   );
 }
