@@ -2,7 +2,7 @@ import React from "react";
 import { FaTrashAlt } from "react-icons/fa";
 import { FaRegEdit } from "react-icons/fa";
 import { IoIosAddCircle } from "react-icons/io";
-import { useRef, useCallback } from "react";
+import { useRef } from "react";
 import api from "../../api";
 import { auth } from "../../firebase";
 import Loading from "../Loading";
@@ -52,8 +52,6 @@ function Note() {
 
   const [notes, setNotes] = React.useState([]);
 
-  const [click, setClick] = React.useState(false);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!note.title || !note.description) {
@@ -63,7 +61,7 @@ function Note() {
     setLoading(true);
     if (addNote) {
       try {
-        const res = await api.post(`notes/addnote/`, {
+        await api.post(`notes/addnote/`, {
           title: note.title,
           description: note.description,
           tag: note.tag,
@@ -79,7 +77,7 @@ function Note() {
       }
     } else {
       try {
-        const res = await api.put(`notes/updatenote/${note.id}`, {
+        await api.put(`notes/updatenote/${note.id}`, {
           title: note.title,
           description: note.description,
           tag: note.tag,
@@ -135,6 +133,7 @@ function Note() {
           {notes.length === 0 ? (
             <div className="flex  items-center  h-[30vh] w-[50vw]">
               <img
+              alt="searching..."
                 src="/images/searching.gif"
                 className="scale-50 p-0 "
               ></img>
