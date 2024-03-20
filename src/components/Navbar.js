@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import  "../App.css"
 
 import {
   selectUserName,
@@ -111,8 +112,9 @@ const Dropdown = styled.div`
 `;
 const Signout = styled.div`
   position: relative;
-  height: 48px;
-  width: 60px;
+  height: 40px;
+  width: 40px;
+  border-radius:50%;
   display: flex;
   cursor: pointer;
   align-items: center;
@@ -198,34 +200,37 @@ const Nav = styled.nav`
 
 const Logo1 = styled.a`
   font-size: 30px;
+  font-family: "Poppins", sans-serif;
 `;
 const Navmenu = styled.div`
   display: flex;
   flex-direction: row nowrap;
   height: 100%;
-  justify-content: flex-end;
+  gap:2.5rem;
   align-items: center;
   margin: 0px;
   padding: 0px;
   position: relative;
   margin-right: auto;
-  margin-left: 25px;
+  margin-left: 6rem;
+  font-family: "Roboto", sans-serif;
 
   @media (max-width: 768px) {
     display: none;
   }
 `;
 const Login = styled.a`
-  background-color: rgb(0, 0, 0, 0.6);
-  border: 2px solid #f9f9f9;
+  background-color: white;
+  border: 2px solid white;
   padding: 10px 20px !important;
   border-radius: 5px;
   transition: all 0.2s ease 0s;
+  font-family: "Roboto", sans-serif;
+  color:white;
 
   &:hover {
-    background-color: #f9f9f9;
-    color: black;
-    font-weight: bold;
+    background-color: #fff;
+    color:black;
     cursor: pointer;
   }
 `;
